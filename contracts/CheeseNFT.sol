@@ -10,19 +10,19 @@ contract CheeseNFT is ERC721 {
 
     // there will never be a token with the id 0.
     Counters.Counter private _tokenIds;
-    uint256 private lastMintedAt;
+    uint256 private lastTouched;
 
     constructor() ERC721("Cheese", "CHS") {}
 
     function createCheeseNFT() external {
         require(
-            block.timestamp - lastMintedAt > 24 hours,
+            block.timestamp - lastTouched > 24 hours,
             "You cannot create cheese when one is living."
         );
         _tokenIds.increment();
         uint256 currentId = _tokenIds.current();
-        _mint(msg.sender, currentId);
-        lastMintedAt = block.timestamp;
+        _safeMint(msg.sender, currentId);
+        lastTouched = block.timestamp;
     }
 
     function _transfer(
@@ -31,17 +31,19 @@ contract CheeseNFT is ERC721 {
         uint256 _tokenId
     ) internal virtual override {
         require(
-            block.timestamp - lastMintedAt < 24 hours,
+            block.timestamp - lastTouched < 24 hours &&
+                _tokenId == _tokenIds.current(),
             "You cannot transfer your dead cheese."
         );
         super._transfer(_from, _to, _tokenId);
+        lastTouched = block.timestamp;
     }
 
     function getCurrentTokenId() external view returns (uint256) {
         return _tokenIds.current();
     }
 
-    function getLastMintedAt() external view returns (uint256) {
-        return lastMintedAt;
+    function getLastTouched() external view returns (uint256) {
+        return lastTouched;
     }
 }
