@@ -1,17 +1,16 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import {DeployFunction } from "hardhat-deploy/types";
+import { DeployFunction } from "hardhat-deploy/types";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deployments, getNamedAccounts } = hre;
   const { deployer } = await getNamedAccounts();
   const { deploy } = deployments;
 
-  await deploy("Greeter", {
+  await deploy("CheeseNFT", {
     from: deployer,
-    args: ["Hello Hardhat!"],
-    log: true
+    log: true,
   });
-}
+};
 
 export default func;
-func.tags = ["Greeter"];
+func.tags = ["CheeseNFT"];
